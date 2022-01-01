@@ -187,6 +187,82 @@ func (list *List) Sort(comparator utils.Comparator) {
 	list.Add(values...)
 }
 
+// Swap swaps values of two elements at the given indices
+func (list *List) Swap(i, j int) {
+	if !list.withinRange(i) || !list.withinRange(j) {
+		return
+	}
+
+	var first, second *interface{}
+
+	for element, index := list.first, 0; index <= list.size && element != nil; element, index = element.next, index+1 {
+		if index == i {
+			first = &element.value
+		}
+		if index == j {
+			second = &element.value
+		}
+	}
+
+	*first, *second = *second, *first
+}
+
+// Insert inserts values at specified index position shifting the value at that poisition (if any) and any subsequent elements to the right.
+// Does not do anything if position is negative or bigger than list's size
+// Note: position equal to list's size is valid, i.e. append
+func (list *List) Insert(index int, values ...interface{}) {
+
+	if !list.withinRange(index) {
+		if index == list.size {
+			list.Add(values...)
+		}
+		return
+	}
+
+	newList := New()
+	newList.Add(values...)
+
+	var prev *element
+	element := list.first
+	for i := 0; i != index; element, index = element.next, i+1 {
+		prev = element
+	}
+
+	if element == list.first {
+		list.first = newList.first
+	} else {
+		prev.next = newList.first
+	}
+	newList.last.next = element
+
+	list.size += len(values)
+	newList.Clear()
+}
+
+// Set value at specified index
+// Does not do anything if position is negative or bigger than list's size
+// Note position equal to list's size is valid, i.e. append
+func (list *List) Set(index int, value interface{}) {
+	if !list.withinRange(index) {
+		if list.size == index {
+			list.Add(value)
+		}
+		return 
+	}
+
+	for element, i := list.first, 0; i < list.size && element != nil; element, i = element.next, i + 1 {
+		if i == index {
+			element.value = value
+			break
+		}
+	}
+}
+
+// String returns a string representation of container
+func (list *List) String() string {
+	return ""
+}
+
 func (list *List) withinRange(index int) bool {
 	return index >= 0 && index < list.size
 }
