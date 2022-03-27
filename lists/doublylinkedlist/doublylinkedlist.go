@@ -85,6 +85,10 @@ func (list *List) Set(index int, value interface{}) {
 
 }
 
+func (list *List) Get(index int) (interface{}, bool) {
+    return nil, false
+}
+
 func (list *List) String() string {
     str := "DoubleLinkedList\n"
     values := []string{}
